@@ -56,11 +56,9 @@ public class FileMetadata {
     private String scanStatus = "CLEAN";
 
     // AI & Search Indexing
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String extractedText;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String aiSummary;
 

@@ -16,8 +16,8 @@ public interface FileMetadataRepository extends JpaRepository<FileMetadata, UUID
 
     @Query("SELECT f FROM FileMetadata f WHERE f.ownerId = :ownerId AND f.isTrashed = false AND " +
            "(LOWER(f.name) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-           "LOWER(f.tags) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-           "LOWER(f.extractedText) LIKE LOWER(CONCAT('%', :query, '%')))")
+           "(f.tags IS NOT NULL AND LOWER(f.tags) LIKE LOWER(CONCAT('%', :query, '%'))) OR " +
+           "(f.extractedText IS NOT NULL AND LOWER(f.extractedText) LIKE LOWER(CONCAT('%', :query, '%'))))")
     List<FileMetadata> searchFiles(@Param("ownerId") UUID ownerId, @Param("query") String query);
 
     @Query("SELECT f.mimeType, SUM(f.size), COUNT(f) FROM FileMetadata f WHERE f.ownerId = :ownerId AND f.isTrashed = false GROUP BY f.mimeType")
