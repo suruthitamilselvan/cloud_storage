@@ -1,0 +1,57 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: cloud-storage-backend
+
+  datasource:
+    # Default local dev uses H2 in PostgreSQL compatibility mode for instant zero-dependency execution.
+    # To switch to real PostgreSQL, update url to jdbc:postgresql://localhost:5432/cloudstorage
+    url: jdbc:h2:mem:cloudstoragedb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+
+app:
+  jwt:
+    secret: 9a6747cc6168e2ee3f2d25010620245a4a5d89f816436981ce81e140d7c086c7
+    expiration-ms: 86400000 # 24 hours
+
+storage:
+  type: LOCAL # Options: LOCAL, S3
+  local:
+    upload-dir: ./storage
+  s3:
+    bucket-name: my-cloud-storage-bucket
+    region: us-east-1
+    access-key: YOUR_AWS_ACCESS_KEY
+    secret-key: YOUR_AWS_SECRET_KEY
+
+logging:
+  level:
+    root: INFO
+    com.cloudstorage: DEBUG
