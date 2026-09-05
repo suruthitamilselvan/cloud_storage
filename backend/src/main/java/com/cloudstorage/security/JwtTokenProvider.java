@@ -39,6 +39,20 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public String generateTokenFromUser(com.cloudstorage.model.User user) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+
+        return Jwts.builder()
+                .setSubject(user.getId().toString())
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .claim("email", user.getEmail())
+                .claim("fullName", user.getFullName())
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public UUID getUserIdFromJWT(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())

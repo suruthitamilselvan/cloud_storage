@@ -32,6 +32,7 @@ export const authService = {
       const res = await apiClient.post('/auth/login', { email, password });
       if (res.data.token) {
         localStorage.setItem('jwt_token', res.data.token);
+        localStorage.setItem('user_info', JSON.stringify(res.data));
       }
       return res.data;
     } catch (err) {
@@ -46,6 +47,7 @@ export const authService = {
       const res = await apiClient.post('/auth/google', { email, fullName });
       if (res.data.token) {
         localStorage.setItem('jwt_token', res.data.token);
+        localStorage.setItem('user_info', JSON.stringify(res.data));
       }
       return res.data;
     } catch (err) {
@@ -68,6 +70,7 @@ export const authService = {
       const res = await apiClient.post('/auth/google', { idToken: credential });
       if (res.data.token) {
         localStorage.setItem('jwt_token', res.data.token);
+        localStorage.setItem('user_info', JSON.stringify(res.data));
       }
       return res.data;
     } catch (err) {
@@ -92,6 +95,7 @@ export const authService = {
       const res = await apiClient.post('/auth/register', { fullName, email, password });
       if (res.data.token) {
         localStorage.setItem('jwt_token', res.data.token);
+        localStorage.setItem('user_info', JSON.stringify(res.data));
       }
       return res.data;
     } catch (err) {

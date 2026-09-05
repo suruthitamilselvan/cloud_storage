@@ -28,6 +28,11 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    @PostMapping("/google")
+    public ResponseEntity<AuthResponse> googleLogin(@RequestBody com.cloudstorage.dto.GoogleAuthRequest request) {
+        return ResponseEntity.ok(authService.googleLogin(request));
+    }
+
     @GetMapping("/me")
     public ResponseEntity<AuthResponse> getCurrentUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         if (userPrincipal == null) {

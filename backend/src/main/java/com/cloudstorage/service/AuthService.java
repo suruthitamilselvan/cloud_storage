@@ -112,4 +112,64 @@ public class AuthService {
                 user.getStorageLimit()
         );
     }
+
+    @Transactional
+    public AuthResponse googleLogin(com.cloudstorage.dto.GoogleAuthRequest request) {
+        String email = request.getEmail();
+        String fullName = request.getFullName();
+
+        if ((email == null || email.isBlank()) && request.getIdToken() != null) {
+            try {
+                String[] parts = request.getIdToken().split("\\.");
+                if (parts.length >= 2) {
+                    String body = new String(java.util.Base64.getUrlDecoder().decode(parts[1]));
+                    if (body.contains("\"email\":\"")) {
+                        int start = body.indexOf("\"email\":\"") + 9;
+                        int end = body.indexOf("\"", start);
+                        email = body.substring(start, end);
+                    }
+                    if (body.contains("\"name\":\"")) {
+                        int start = body.indexOf("\"name\":\"") + 8;
+                        int end = body.indexOf("\"", start);
+                        fullName = body.substring(start, end);
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+
+        if (email == null || email.isBlank()) {
+            email = "google.user." + System.currentTimeMillis() + "@gmail.com";
+        }
+        if (fullName == null || fullName.isBlank()) {
+            fullName = email.split("@")[0];
+        }
+
+        final String finalEmail = email;
+        final String finalFullName = fullName;
+
+        User user = userRepository.findByEmail(email).orElseGet(() -> {
+            User newUser = User.builder()
+                    .email(finalEmail)
+                    .fullName(finalFullName)
+                    .passwordHash(passwordEncoder.encode(UUID.randomUUID().toString()))
+                    .role("ROLE_USER")
+                    .authProvider("GOOGLE")
+                    .storageUsed(0L)
+                    .storageLimit(15L * 1024 * 1024 * 1024)
+                    .build();
+            return userRepository.save(newUser);
+        });
+
+        String jwt = tokenProvider.generateTokenFromUser(user);
+
+        return new AuthResponse(
+                jwt,
+                user.getId(),
+                user.getEmail(),
+                user.getFullName(),
+                user.getRole(),
+                user.getStorageUsed(),
+                user.getStorageLimit()
+        );
+    }
 }
