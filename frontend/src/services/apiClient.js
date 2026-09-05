@@ -1,10 +1,13 @@
 import axios from 'axios';
 
+const baseURL = import.meta.env.VITE_API_BASE_URL || '/api';
+
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000,
 });
 
 apiClient.interceptors.request.use((config) => {
@@ -22,9 +25,6 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('jwt_token');
-      if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
-        window.location.href = '/login';
-      }
     }
     return Promise.reject(error);
   }
