@@ -37,26 +37,8 @@ window.addEventListener('unhandledrejection', (event) => {
   );
 });
 
-const mountReactApp = () => {
-  const rootElement = document.getElementById('root');
-  if (!rootElement) {
-    setTimeout(mountReactApp, 50);
-    return;
-  }
-  try {
-    ReactDOM.createRoot(rootElement).render(
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    );
-  } catch (err) {
-    console.error("React Mount Catch:", err);
-    renderErrorScreen("React Mount Exception", err.message, err.stack);
-  }
-};
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', mountReactApp);
-} else {
-  mountReactApp();
-}
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
